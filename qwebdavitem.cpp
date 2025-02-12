@@ -51,75 +51,81 @@
 #include "qwebdavitem.h"
 #include "qnaturalsort.h"
 
-QWebdavItem::QWebdavItem() :
-    m_dirOrFile()
-   ,m_path()
-   ,m_name()
-   ,m_ext()
-   ,m_lastModified()
-   ,m_lastModifiedStr()
-   ,m_size(0)
+QWebdavItem::QWebdavItem()
+    : m_dirOrFile()
+    , m_path()
+    , m_name()
+    , m_ext()
+    , m_lastModified()
+    , m_lastModifiedStr()
+    , m_size(0)
 #ifdef QWEBDAVITEM_EXTENDED_PROPERTIES
-   ,m_displayName()
-   ,m_createdAt()
-   ,m_createdAtStr()
-   ,m_contentLanguage()
-   ,m_entityTag()
-   ,m_mimeType()
-   ,m_isExecutable(false)
-   ,m_source()
- #endif // QWEBDAVITEM_EXTENDED_PROPERTIES
-{
-}
-
-QWebdavItem::QWebdavItem(const QString &path, const QString &name,
-                         const QString &ext, bool dirOrFile,
-                         const QDateTime &lastModified, quint64 size) :
-   m_dirOrFile(dirOrFile)
-  ,m_path(path)
-  ,m_name(name)
-  ,m_ext(ext)
-  ,m_lastModified(lastModified)
-  ,m_lastModifiedStr(lastModified.toString("yyyy-MM-dd hh:mm")) // ISO format
-  ,m_size(size)
-#ifdef QWEBDAVITEM_EXTENDED_PROPERTIES
-  ,m_displayName()
-  ,m_createdAt()
-  ,m_createdAtStr()
-  ,m_contentLanguage()
-  ,m_entityTag()
-  ,m_mimeType()
-  ,m_isExecutable(false)
-  ,m_source()
+    , m_displayName()
+    , m_createdAt()
+    , m_createdAtStr()
+    , m_contentLanguage()
+    , m_entityTag()
+    , m_mimeType()
+    , m_isExecutable(false)
+    , m_source()
 #endif // QWEBDAVITEM_EXTENDED_PROPERTIES
-{
-}
+{}
+
+QWebdavItem::QWebdavItem(const QString &path,
+                         const QString &name,
+                         const QString &ext,
+                         bool dirOrFile,
+                         const QDateTime &lastModified,
+                         quint64 size)
+    : m_dirOrFile(dirOrFile)
+    , m_path(path)
+    , m_name(name)
+    , m_ext(ext)
+    , m_lastModified(lastModified)
+    , m_lastModifiedStr(lastModified.toString("yyyy-MM-dd hh:mm")) // ISO format
+    , m_size(size)
+#ifdef QWEBDAVITEM_EXTENDED_PROPERTIES
+    , m_displayName()
+    , m_createdAt()
+    , m_createdAtStr()
+    , m_contentLanguage()
+    , m_entityTag()
+    , m_mimeType()
+    , m_isExecutable(false)
+    , m_source()
+#endif // QWEBDAVITEM_EXTENDED_PROPERTIES
+{}
 
 #ifdef QWEBDAVITEM_EXTENDED_PROPERTIES
-QWebdavItem::QWebdavItem(const QString &path, const QString &name,
-            const QString &ext, bool dirOrFile,
-            const QDateTime &lastModified, quint64 size,
-            const QString &displayName, const QDateTime &createdAt,
-            const QString &contentLanguage, const QString &entityTag,
-            const QString &mimeType, bool isExecutable,
-            const QString &source) :
-    m_dirOrFile(dirOrFile)
-   ,m_path(path)
-   ,m_name(name)
-   ,m_ext(ext)
-   ,m_lastModified(lastModified)
-   ,m_lastModifiedStr(lastModified.toString("yyyy-MM-dd hh:mm")) // ISO format
-   ,m_size(size)
-   ,m_displayName(displayName)
-   ,m_createdAt(createdAt)
-   ,m_createdAtStr(createdAt.toString("yyyy-MM-dd hh:mm")) // ISO format
-   ,m_contentLanguage(contentLanguage)
-   ,m_entityTag(entityTag)
-   ,m_mimeType(mimeType)
-   ,m_isExecutable(isExecutable)
-   ,m_source(source)
-{
-}
+QWebdavItem::QWebdavItem(const QString &path,
+                         const QString &name,
+                         const QString &ext,
+                         bool dirOrFile,
+                         const QDateTime &lastModified,
+                         quint64 size,
+                         const QString &displayName,
+                         const QDateTime &createdAt,
+                         const QString &contentLanguage,
+                         const QString &entityTag,
+                         const QString &mimeType,
+                         bool isExecutable,
+                         const QString &source)
+    : m_dirOrFile(dirOrFile)
+    , m_path(path)
+    , m_name(name)
+    , m_ext(ext)
+    , m_lastModified(lastModified)
+    , m_lastModifiedStr(lastModified.toString("yyyy-MM-dd hh:mm")) // ISO format
+    , m_size(size)
+    , m_displayName(displayName)
+    , m_createdAt(createdAt)
+    , m_createdAtStr(createdAt.toString("yyyy-MM-dd hh:mm")) // ISO format
+    , m_contentLanguage(contentLanguage)
+    , m_entityTag(entityTag)
+    , m_mimeType(mimeType)
+    , m_isExecutable(isExecutable)
+    , m_source(source)
+{}
 #endif // QWEBDAVITEM_EXTENDED_PROPERTIES
 
 bool QWebdavItem::isDir() const
@@ -198,16 +204,14 @@ QString QWebdavItem::source() const
 }
 #endif // QWEBDAVITEM_EXTENDED_PROPERTIES
 
-bool QWebdavItem::operator <(const QWebdavItem &other) const
+bool QWebdavItem::operator<(const QWebdavItem &other) const
 {
-    if(m_dirOrFile != other.isDir())
+    if (m_dirOrFile != other.isDir()) {
         return m_dirOrFile;
-
+    }
     // sort with simple QString comparison, e.g. 1 10 2 200 6 600
     //return m_name.toLower() < other.name().toLower();
 
     // natural sort e.g. 1 2 6 10 200 600
-    return QNaturalSort::naturalCompare(m_name.toLower(), other.name().toLower() ) < 0;
+    return QNaturalSort::naturalCompare(m_name.toLower(), other.name().toLower()) < 0;
 }
-
-

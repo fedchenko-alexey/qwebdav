@@ -51,71 +51,81 @@
 #ifndef QWEBDAV_H
 #define QWEBDAV_H
 
-#include <QtCore>
-#include <QtNetwork>
-
 #include "qwebdav_global.h"
+
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 /**
  * @brief Main class used to handle the webdav protocol
  */
-class QWEBDAVSHARED_EXPORT QWebdav : public QNetworkAccessManager
+class QWEBDAV_EXPORT QWebdav : public QNetworkAccessManager
 {
     Q_OBJECT
-
 public:
-    enum QWebdavConnectionType {HTTP = 1, HTTPS};
+    enum QWebdavConnectionType { HTTP = 1, HTTPS };
 
-    explicit QWebdav(QObject* parent = nullptr);
+    QWebdav(QObject *parent = 0);
     ~QWebdav();
 
-    typedef QMap<QString, QMap < QString, QVariant > > PropValues;
-    typedef QMap<QString, QStringList > PropNames;
+    typedef QMap<QString, QMap<QString, QVariant>> PropValues;
+    typedef QMap<QString, QStringList> PropNames;
 
+    QString hostname() const;
+    int port() const;
+    QString rootPath() const;
+    QString username() const;
+    QString password() const;
+    QWebdavConnectionType connectionType() const;
+    bool isSSL() const;
 
-    [[nodiscard]] QString hostname() const;
-    [[nodiscard]] int port() const;
-    [[nodiscard]] QString rootPath() const;
-    [[nodiscard]] QString username() const;
-    [[nodiscard]] QString password() const;
-    [[nodiscard]] QWebdavConnectionType connectionType() const;
-    [[nodiscard]] bool isSSL() const;
+    // void setConnectionSettings(const QWebdavConnectionType connectionType,
+    //                            const QString &hostname,
+    //                            const QString &rootPath = "/",
+    //                            const QString &username = "",
+    //                            const QString &password = "",
+    //                            int port = 0,
+    //                            const QString &sslCertDigestMd5 = "",
+    //                            const QString &sslCertDigestSha1 = "");
 
-    void setConnectionSettings( const QWebdavConnectionType connectionType,
-                            const QString &hostname,
-                            const QString &rootPath = "/",
-                            const QString &username = "",
-                            const QString &password = "",
-                            int port = 0,
-                            const QString &sslCertDigestMd5 = "",
-                            const QString &sslCertDigestSha1 = "" );
+    void setConnectionSettings(const QWebdavConnectionType connectionType,
+                               const QString &hostname,
+                               const QString &rootPath = "/",
+                               const QString &token = "",
+                               int port = 0,
+                               const QString &sslCertDigestMd5 = "",
+                               const QString &sslCertDigestSha1 = "");
+
 
     //! set SSL certificate digests after emitted checkSslCertifcate() signal
     void acceptSslCertificate(const QString &sslCertDigestMd5 = "",
                               const QString &sslCertDigestSha1 = "");
 
-    QNetworkReply* list(const QString& path);
-    QNetworkReply* list(const QString& path, int depth);
+    QNetworkReply *list(const QString &path);
+    QNetworkReply *list(const QString &path, int depth);
 
-    QNetworkReply* search(const QString& path, const QString& query);
+    QNetworkReply *search(const QString &path, const QString &query);
 
-    QNetworkReply* get(const QString& path);
-    QNetworkReply* get(const QString& path, QIODevice* data);
-    QNetworkReply* get(const QString& path, QIODevice* data, quint64 fromRangeInBytes);
+    QNetworkReply *get(const QString &path);
+    QNetworkReply *get(const QString &path, QIODevice *data);
+    QNetworkReply *get(const QString &path, QIODevice *data, quint64 fromRangeInBytes);
 
-    QNetworkReply* put(const QString& path, QIODevice* data);
-    QNetworkReply* put(const QString& path, const QByteArray& data );
+    QNetworkReply *put(const QString &path, QIODevice *data);
+    QNetworkReply *put(const QString &path, const QByteArray &data);
 
-    QNetworkReply* mkdir(const QString& dir );
-    QNetworkReply* copy(const QString& pathFrom, const QString& pathTo, bool overwrite = false);
-    QNetworkReply* move(const QString& pathFrom, const QString& pathTo, bool overwrite = false);
-    QNetworkReply* remove(const QString& path );
+    QNetworkReply *patch(const QString &path, QIODevice *data);
+    QNetworkReply *patch(const QString &path, const QByteArray &data);
 
-    QNetworkReply* propfind(const QString& path, const QByteArray& query, int depth = 0);
-    QNetworkReply* propfind(const QString& path, const QWebdav::PropNames& props, int depth = 0);
+    QNetworkReply *mkdir(const QString &dir);
+    QNetworkReply *copy(const QString &pathFrom, const QString &pathTo, bool overwrite = false);
+    QNetworkReply *move(const QString &pathFrom, const QString &pathTo, bool overwrite = false);
+    QNetworkReply *remove(const QString &path);
 
-    QNetworkReply* proppatch(const QString& path, const QWebdav::PropValues& props);
-    QNetworkReply* proppatch(const QString& path, const QByteArray& query);
+    QNetworkReply *propfind(const QString &path, const QByteArray &query, int depth = 0);
+    QNetworkReply *propfind(const QString &path, const QWebdav::PropNames &props, int depth = 0);
+
+    QNetworkReply *proppatch(const QString &path, const QWebdav::PropValues &props);
+    QNetworkReply *proppatch(const QString &path, const QByteArray &query);
 
     /* TODO lock, unlock */
 
@@ -124,6 +134,7 @@ public:
     //! converts a digest from hexadecimal format ( XX:XX:XX:... with X in [0-9,A-F] ) to QByteArray
     static QByteArray hexToDigest(const QString &input);
 
+    // void setConnectionSettings(int, QString, const char *, QString, QString, int);
 signals:
     //! signal is emitted when an SSL error occured, the SSL certificates have to be checked
     void checkSslCertifcate(const QList<QSslError> &errors);
@@ -131,29 +142,31 @@ signals:
 
 protected slots:
     void replyReadyRead();
-    void replyFinished(QNetworkReply*);
-    void replyDeleteLater(QNetworkReply*);
+    void replyFinished(QNetworkReply *);
+    void replyDeleteLater(QNetworkReply *);
     void replyError(QNetworkReply::NetworkError);
-    void provideAuthenication(QNetworkReply* reply, QAuthenticator* authenticator);
-    void sslErrors(QNetworkReply *reply,const QList<QSslError> &errors);
+    // void provideAuthenication(QNetworkReply *reply, QAuthenticator *authenticator);
+    void onSslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
 
 protected:
-    QNetworkReply* createRequest(const QString& method, QNetworkRequest& req, QIODevice* outgoingData = 0 );
-    QNetworkReply* createRequest(const QString& method, QNetworkRequest& req, const QByteArray& outgoingData);
+    QNetworkReply *createWebdavRequest(const QString &method,
+                                       QNetworkRequest &req,
+                                       QIODevice *outgoingData = 0);
+    QNetworkReply *createWebdavRequest(const QString &method,
+                                       QNetworkRequest &req,
+                                       const QByteArray &outgoingData);
 
     //! creates the absolute path from m_rootPath and relPath
     QString absolutePath(const QString &relPath);
-private:
-
-    QNetworkRequest buildRequest();
 
 private:
-    QMap<QNetworkReply*, QIODevice*> m_outDataDevices;
-    QMap<QNetworkReply*, QIODevice*> m_inDataDevices;
+    QMap<QNetworkReply *, QIODevice *> m_outDataDevices;
+    QMap<QNetworkReply *, QIODevice *> m_inDataDevices;
 
     QString m_rootPath;
     QString m_username;
     QString m_password;
+    QString m_token;
     QUrl m_baseUrl;
 
     QWebdavConnectionType m_currentConnectionType;

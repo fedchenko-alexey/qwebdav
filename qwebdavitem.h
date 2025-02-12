@@ -51,36 +51,45 @@
 #ifndef QWEBDAVFILE_H
 #define QWEBDAVFILE_H
 
-#include "qwebdav_global.h"
-
 #include <QDateTime>
 
-class QWEBDAVSHARED_EXPORT QWebdavItem
+#include "qwebdav_global.h"
+
+class QWEBDAV_EXPORT QWebdavItem
 {
 public:
     QWebdavItem();
 
-    QWebdavItem(const QString &path, const QString &name,
-                const QString &ext, bool dirOrFile,
-                const QDateTime &lastModified, quint64 size);
+    QWebdavItem(const QString &path,
+                const QString &name,
+                const QString &ext,
+                bool dirOrFile,
+                const QDateTime &lastModified,
+                quint64 size);
 
 #ifdef QWEBDAVITEM_EXTENDED_PROPERTIES
-    QWebdavItem(const QString &path, const QString &name,
-                const QString &ext, bool dirOrFile,
-                const QDateTime &lastModified, quint64 size,
-                const QString &displayName, const QDateTime &createdAt,
-                const QString &contentLanguage, const QString &entityTag,
-                const QString &mimeType, bool isExecutable,
+    QWebdavItem(const QString &path,
+                const QString &name,
+                const QString &ext,
+                bool dirOrFile,
+                const QDateTime &lastModified,
+                quint64 size,
+                const QString &displayName,
+                const QDateTime &createdAt,
+                const QString &contentLanguage,
+                const QString &entityTag,
+                const QString &mimeType,
+                bool isExecutable,
                 const QString &source);
 #endif
 
-    [[nodiscard]] bool isDir() const;
-    [[nodiscard]] QString path() const;
-    [[nodiscard]] QString name() const;
-    [[nodiscard]] QString ext() const;
-    [[nodiscard]] QDateTime lastModified() const;
-    [[nodiscard]] QString lastModifiedStr() const;
-    [[nodiscard]] quint64 size() const;
+    bool isDir() const;
+    QString path() const;
+    QString name() const;
+    QString ext() const;
+    QDateTime lastModified() const;
+    QString lastModifiedStr() const;
+    quint64 size() const;
 
 #ifdef QWEBDAVITEM_EXTENDED_PROPERTIES
     QString displayName() const;
@@ -93,7 +102,7 @@ public:
     QString source() const;
 #endif
 
-    bool operator <(const QWebdavItem &other) const;
+    bool operator<(const QWebdavItem &other) const;
 
 protected:
     bool m_dirOrFile;
@@ -114,7 +123,6 @@ protected:
     bool m_isExecutable;
     QString m_source;
 #endif
-
 };
 
 #endif // QWEBDAVFILE_H

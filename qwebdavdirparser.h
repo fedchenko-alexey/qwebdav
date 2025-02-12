@@ -51,25 +51,20 @@
 #ifndef QWEBDAVDIRPARSER_H
 #define QWEBDAVDIRPARSER_H
 
-// without GUI
-// #include <QtCore>
-//#include <QApplication>
-
-#include <QDomDocument>
-#include <QDomElement>
-#include <QDomNodeList>
-
-#include "qwebdav_global.h"
-
-#include "qwebdav.h"
+#include "qobject.h"
 #include "qwebdavitem.h"
 
-class QWEBDAVSHARED_EXPORT QWebdavDirParser : public QObject
+class QNetworkReply;
+class QMutex;
+class QDomElement;
+class QDomNodeList;
+
+class QWebdav;
+class QWebdavDirParser : public QObject
 {
     Q_OBJECT
-
 public:
-    explicit QWebdavDirParser(QObject *parent = nullptr);
+    QWebdavDirParser(QObject *parent = nullptr);
     ~QWebdavDirParser();
 
     //! get all items of a collection
@@ -81,9 +76,9 @@ public:
     bool listItem(QWebdav *pWebdav, const QString &path);
 
     QList<QWebdavItem> getList();
-    [[nodiscard]] bool isBusy() const;
-    [[nodiscard]] bool isFinished() const;
-    [[nodiscard]] QString path() const;
+    bool isBusy() const;
+    bool isFinished() const;
+    QString path() const;
 
 signals:
     void finished();
@@ -95,18 +90,17 @@ public slots:
 protected slots:
     //void error(QNetworkReply::NetworkError code);
     void replyFinished();
-    void replyDeleteLater(QNetworkReply* reply);
+    void replyDeleteLater(QNetworkReply *reply);
 
 protected:
-    void parseMultiResponse( const QByteArray &data );
-    void parseResponse( const QDomElement& dom );
-    void davParsePropstats (const QString &path, const QDomNodeList &propstats);
-    int codeFromResponse( const QString &response );
-    QDateTime parseDateTime( const QString &input, const QString &type);
+    void parseMultiResponse(const QByteArray &data);
+    void parseResponse(const QDomElement &dom);
+    void davParsePropstats(const QString &path, const QDomNodeList &propstats);
+    int codeFromResponse(const QString &response);
+    QDateTime parseDateTime(const QString &input, const QString &type);
 
 private:
-//    QScopedPointer<QMutex> m_mutex;
-    QScopedPointer<QRecursiveMutex> m_mutex;
+    QScopedPointer<QMutex> m_mutex;
     QWebdav *m_webdav;
     QNetworkReply *m_reply;
     QList<QWebdavItem> m_dirList;

@@ -44,16 +44,15 @@
 #ifndef QNATURALSORT_H
 #define QNATURALSORT_H
 
-#include <QtCore>
+#include <QString>
 
 #include "qwebdav_global.h"
 
-class QWEBDAVSHARED_EXPORT QNaturalSort
-{
-public:
-    QNaturalSort();
+namespace QNaturalSort {
 
-    static int naturalCompare(const QString &s1, const QString &s2,  Qt::CaseSensitivity cs = Qt::CaseInsensitive);
+QWEBDAV_EXPORT int naturalCompare(const QString &s1,
+                                  const QString &s2,
+                                  Qt::CaseSensitivity cs = Qt::CaseInsensitive);
 };
 
 #endif // QNATURALSORT_H
