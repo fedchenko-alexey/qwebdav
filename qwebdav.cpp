@@ -55,8 +55,6 @@
 #include <QEventLoop>
 #include <QFile>
 
-#define DEBUG_WEBDAV 0
-
 QWebdav::QWebdav(QObject *parent)
     : QNetworkAccessManager(parent)
     , m_rootPath()
@@ -177,7 +175,9 @@ void QWebdav::replyReadyRead()
 
 void QWebdav::replyFinished(QNetworkReply *reply)
 {
+#ifdef DEBUG_WEBDAV
     qDebug() << "QWebdav::replyFinished()" << reply->url();
+#endif
     if (reply->error() != QNetworkReply::NoError) {
         qWarning() << reply->url() << reply->error() << reply->readAll();
     }

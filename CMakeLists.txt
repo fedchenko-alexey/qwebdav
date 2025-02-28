@@ -22,7 +22,7 @@ target_link_libraries(QtWebDAV PUBLIC
         )
 target_include_directories(QtWebDAV PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(QtWebDAV PRIVATE -DQWEBDAV_LIBRARY)
-target_compile_definitions(QtWebDAV PRIVATE DEBUG_WEBDAV)
+# target_compile_definitions(QtWebDAV PRIVATE DEBUG_WEBDAV=0)
 set_target_properties(QtWebDAV PROPERTIES AUTOMOC ON)
 option(BUILD_EXAMPLE "Build with example")
 if (BUILD_EXAMPLE)
