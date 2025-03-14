@@ -60,7 +60,11 @@ class QDomElement;
 class QDomNodeList;
 
 class QWebdav;
+#ifdef Q_OS_WIN32
+class QWEBDAV_EXPORT QWebdavDirParser : public QObject
+#else
 class QWebdavDirParser : public QObject
+#endif
 {
     Q_OBJECT
 public:
