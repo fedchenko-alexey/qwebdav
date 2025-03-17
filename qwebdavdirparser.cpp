@@ -53,6 +53,13 @@
 
 #include <QDomDocument>
 #include <QMutex>
+#include <QTimeZone>
+
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <chrono>
+#include <ctime>
 
 QWebdavDirParser::QWebdavDirParser(QObject *parent)
     : QObject(parent)
@@ -530,6 +537,21 @@ int QWebdavDirParser::codeFromResponse(const QString &response)
     return str.toInt();
 }
 
+static std::time_t parseRfc1123Date(const std::string& dateString) {
+    std::istringstream dateStream(dateString);
+    std::locale locale("en_US.UTF-8");
+    dateStream.imbue(locale);
+
+    std::tm timeStruct = {};
+    dateStream >> std::get_time(&timeStruct, "%a, %d %b %Y %H:%M:%S");
+
+    if (dateStream.fail()) {
+        throw std::runtime_error("Ошибка при парсинге даты.");
+    }
+
+    return std::chrono::system_clock::to_time_t(std::chrono::system_clock::from_time_t(std::mktime(&timeStruct)));
+}
+
 QDateTime QWebdavDirParser::parseDateTime(const QString &input, const QString &type)
 {
     QDateTime datetime;
@@ -538,7 +560,9 @@ QDateTime QWebdavDirParser::parseDateTime(const QString &input, const QString &t
     if (type == "dateTime.tz") {
         datetime = QDateTime::fromString(input, Qt::ISODate);
     } else if (type == "dateTime.rfc1123") {
-        datetime = usLocal.toDateTime(input);
+        datetime = QDateTime::fromTime_t(parseRfc1123Date(input.toStdString()));
+        datetime.setTimeZone(QTimeZone::utc());
+        datetime = datetime.toTimeZone(QTimeZone::systemTimeZone());
     }
     if (datetime.isValid()) {
         return datetime;
