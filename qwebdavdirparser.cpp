@@ -563,6 +563,10 @@ QDateTime QWebdavDirParser::parseDateTime(const QString &input, const QString &t
         datetime = QDateTime::fromTime_t(parseRfc1123Date(input.toStdString()));
         datetime.setTimeZone(QTimeZone::utc());
         datetime = datetime.toTimeZone(QTimeZone::systemTimeZone());
+    } else if (input.endsWith("GMT")) {
+        datetime = QDateTime::fromTime_t(parseRfc1123Date(input.toStdString()));
+        datetime.setTimeZone(QTimeZone::utc());
+        datetime = datetime.toTimeZone(QTimeZone::systemTimeZone());
     }
     if (datetime.isValid()) {
         return datetime;
